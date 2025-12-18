@@ -94,4 +94,4 @@ def main(page: ft.Page):
         ], horizontal_alignment="center")
     )
 
-ft.app(target=main)
+app = ft.app(target=main, export_as_admin=True)
