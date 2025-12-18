@@ -1,78 +1,52 @@
-import os
-import flet as ft
-import flet.fastapi as flet_fastapi
+import streamlit as st
 
-# ESTA LÍNEA ES EL "BYPASS" CRÍTICO PARA VERCEL
-os.environ["FLET_SERVER_PORT"] = "8080"
+st.set_page_config(page_title="FEE SpA - Simulador", page_icon="⚡")
 
-def main(page: ft.Page):
-    page.title = "FEE SpA - Simulador Profesional"
-    page.theme_mode = ft.ThemeMode.LIGHT
-    page.bgcolor = "#F1F5F9"
-    page.scroll = ft.ScrollMode.AUTO
+# Estilo para que se vea profesional
+st.markdown("""
+    <style>
+    .main { background-color: #F1F5F9; }
+    .stButton>button { width: 100%; background-color: #1E3A8A; color: white; }
+    </style>
+    """, unsafe_allow_headers=True)
 
-    # Base de datos de tarifas netas (Diciembre 2025)
-    tarifas_netas = {
-        "La Araucanía": {"CGE": 235.8, "Codiner": 238.5, "Frontel": 236.2},
-        "Metropolitana": {"Enel": 210.5, "CGE": 215.8, "Colina": 212.0},
-        "Valparaíso": {"Chilquinta": 228.4, "CGE": 230.1},
-        "Antofagasta": {"CGE": 238.4},
-        "Maule": {"CGE": 228.1},
-        "Biobío": {"CGE": 230.4, "Frontel": 233.1}
-    }
+st.title("⚡ FEE SpA")
+st.subheader("Simulador Tarifario Profesional")
+st.caption("Actualización: Diciembre 2025 ✅")
 
-    def actualizar_empresas(e):
-        drp_empresa.options = [ft.dropdown.Option(emp) for emp in tarifas_netas[drp_region.value].keys()]
-        drp_empresa.disabled = False
-        drp_empresa.value = list(tarifas_netas[drp_region.value].keys())[0]
-        page.update()
+# Tu base de datos de Ingeniería
+tarifas = {
+    "La Araucanía": {"CGE": 235.8, "Codiner": 238.5, "Frontel": 236.2},
+    "Metropolitana": {"Enel": 210.5, "CGE": 215.8, "Colina": 212.0},
+    "Valparaíso": {"Chilquinta": 228.4, "CGE": 230.1},
+    "Antofagasta": {"CGE": 238.4},
+    "Maule": {"CGE": 228.1},
+    "Biobío": {"CGE": 230.4, "Frontel": 233.1}
+}
 
-    def calcular(e):
-        try:
-            val_neto = tarifas_netas[drp_region.value][drp_empresa.value]
-            kwh = float(input_kwh.value)
-            deuda = float(input_saldo.value)
-            neto = kwh * val_neto
-            iva = neto * 0.19
-            total_mes = neto + iva
-            total_final = total_mes + deuda
-            
-            res_card.content.controls.clear()
-            res_card.content.controls.extend([
-                ft.Text("INFORME TÉCNICO FEE SpA", weight="bold", color="#1E3A8A"),
-                ft.Divider(),
-                ft.Row([ft.Text("Monto Neto:"), ft.Text(f"${int(neto):,}")], alignment="spaceBetween"),
-                ft.Row([ft.Text("IVA (19%):"), ft.Text(f"${int(iva):,}")], alignment="spaceBetween"),
-                ft.Row([ft.Text("Total del Mes:", weight="bold"), ft.Text(f"${int(total_mes):,}", weight="bold", color="blue")], alignment="spaceBetween"),
-                ft.Divider(),
-                ft.Row([ft.Text("Saldo Anterior (Deuda):"), ft.Text(f"${int(deuda):,}")], alignment="spaceBetween"),
-                ft.Row([
-                    ft.Text("TOTAL A PAGAR:", weight="bold", size=18),
-                    ft.Text(f"${int(total_final):,}", color="green", size=26, weight="bold")
-                ], alignment="spaceBetween"),
-            ])
-            res_card.visible = True
-            page.update()
-        except: pass
+col1, col2 = st.columns(2)
+with col1:
+    region = st.selectbox("Región", list(tarifas.keys()))
+with col2:
+    empresa = st.selectbox("Distribuidora", list(tarifas[region].keys()))
 
-    drp_region = ft.Dropdown(label="Región", options=[ft.dropdown.Option(r) for r in tarifas_netas.keys()], on_change=actualizar_empresas)
-    drp_empresa = ft.Dropdown(label="Empresa", disabled=True)
-    input_kwh = ft.TextField(label="Consumo (kWh)", prefix_icon=ft.Icons.BOLT)
-    input_saldo = ft.TextField(label="Saldo Anterior ($)", value="0", prefix_icon=ft.Icons.HISTORY)
-    res_card = ft.Container(content=ft.Column(), padding=20, bgcolor="white", border_radius=15, visible=False)
+kwh = st.number_input("Consumo mensual (kWh)", min_value=0.0, value=250.0)
+deuda = st.number_input("Saldo Anterior / Deuda ($)", min_value=0.0, value=0.0)
 
-    page.add(
-        ft.Column([
-            ft.Text("FEE SpA", size=32, weight="bold", color="#1E3A8A"),
-            ft.Text("Tarifas actualizadas: Diciembre 2025 ✅", size=11, color="green"),
-            ft.Divider(),
-            drp_region, drp_empresa, input_kwh, input_saldo,
-            ft.ElevatedButton("SIMULAR FACTURACIÓN", on_click=calcular, style=ft.ButtonStyle(bgcolor="#1E3A8A", color="white", padding=20)),
-            res_card,
-            ft.Container(height=40),
-            ft.Text("Desarrollado por Elías Flores Pavez", size=12, weight="bold", color="#475569"),
-            ft.Text("Ingeniero (E) Eléctrico", size=10, italic=True, color="#64748B"),
-        ], horizontal_alignment="center")
-    )
+if st.button("GENERAR INFORME"):
+    valor_kwh = tarifas[region][empresa]
+    neto = kwh * valor_kwh
+    iva = neto * 0.19
+    total_mes = neto + iva
+    total_final = total_mes + deuda
+    
+    st.divider()
+    st.markdown("### 📊 INFORME TÉCNICO")
+    st.write(f"**Monto Neto:** ${int(neto):,}")
+    st.write(f"**IVA (19%):** ${int(iva):,}")
+    st.info(f"**Total del Mes:** ${int(total_mes):,}")
+    st.success(f"**TOTAL A PAGAR: ${int(total_final):,}**")
 
-app = flet_fastapi.app(main)
+st.divider()
+st.write("**Desarrollado por Elías Flores Pavez**")
+st.write("*Ingeniero (E) Eléctrico*")
