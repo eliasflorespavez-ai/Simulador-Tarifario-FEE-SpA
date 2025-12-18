@@ -3,7 +3,7 @@ import streamlit as st
 # 1. Configuración de pantalla y Estilo FEE SpA
 st.set_page_config(page_title="FEE SpA - Simulador", page_icon="⚡")
 
-# Aplicando colores corporativos
+# CSS para Colores Corporativos FEE SpA
 st.markdown("""
     <style>
     .stApp { background-color: #F8FAFC; }
@@ -23,7 +23,7 @@ st.markdown("""
 st.title("⚡ FEE SpA")
 st.subheader("Simulador Tarifario Profesional 2025")
 
-# 2. Base de Datos Maestra (Estructura de Ingeniería)
+# 2. Base de Datos Maestra (Jerarquizada)
 tarifas = {
     "Arica y Parinacota": {"CGE": 242.5},
     "Tarapacá": {"CGE": 240.1},
@@ -46,7 +46,7 @@ tarifas = {
 # 3. Lógica Anti-Bloqueo (Selectores dependientes)
 region_sel = st.selectbox("🌎 Seleccione Región", list(tarifas.keys()))
 
-# Aquí se filtran las distribuidoras para que no haya error de 'llave'
+# Filtrado dinámico: La lista de distribuidoras cambia según la región
 distribuidoras_disponibles = list(tarifas[region_sel].keys())
 empresa_sel = st.selectbox("🏢 Seleccione Distribuidora", distribuidoras_disponibles)
 
