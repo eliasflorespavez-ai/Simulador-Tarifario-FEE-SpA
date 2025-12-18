@@ -2,11 +2,11 @@ import streamlit as st
 
 st.set_page_config(page_title="FEE SpA - Simulador", page_icon="⚡")
 
-# Estilo para que se vea profesional
+# Estilo profesional para la interfaz
 st.markdown("""
     <style>
     .main { background-color: #F1F5F9; }
-    .stButton>button { width: 100%; background-color: #1E3A8A; color: white; }
+    .stButton>button { width: 100%; background-color: #1E3A8A; color: white; font-weight: bold; }
     </style>
     """, unsafe_allow_headers=True)
 
@@ -14,7 +14,7 @@ st.title("⚡ FEE SpA")
 st.subheader("Simulador Tarifario Profesional")
 st.caption("Actualización: Diciembre 2025 ✅")
 
-# Tu base de datos de Ingeniería
+# Tu base de datos de Ingeniería Eléctrica
 tarifas = {
     "La Araucanía": {"CGE": 235.8, "Codiner": 238.5, "Frontel": 236.2},
     "Metropolitana": {"Enel": 210.5, "CGE": 215.8, "Colina": 212.0},
