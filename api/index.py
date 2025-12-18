@@ -1,4 +1,5 @@
 import flet as ft
+import flet.fastapi as flet_fastapi
 
 def main(page: ft.Page):
     page.title = "FEE SpA - Simulador Profesional"
