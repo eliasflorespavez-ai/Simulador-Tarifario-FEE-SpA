@@ -2,7 +2,7 @@ import flet as ft
 import flet.fastapi as flet_fastapi
 
 def main(page: ft.Page):
-    page.title = "FEE SpA - Simulador Profesional"
+    page.title = "FEE. SpA - Simulador Profesional"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.bgcolor = "#F1F5F9"
     page.scroll = ft.ScrollMode.AUTO
