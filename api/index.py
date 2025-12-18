@@ -4,12 +4,10 @@ import flet.fastapi as flet_fastapi
 def main(page: ft.Page):
     page.title = "FEE SpA - Simulador Profesional"
     page.theme_mode = ft.ThemeMode.LIGHT
-    page.window_width = 480
-    page.window_height = 900
     page.bgcolor = "#F1F5F9"
     page.scroll = ft.ScrollMode.AUTO
 
-    # --- Base de datos de tarifas netas ---
+    # --- Base de datos de tarifas netas (Diciembre 2025) ---
     tarifas_netas = {
         "La Araucanía": {"CGE": 235.8, "Codiner": 238.5, "Frontel": 236.2},
         "Metropolitana": {"Enel": 210.5, "CGE": 215.8, "Colina": 212.0},
@@ -19,7 +17,7 @@ def main(page: ft.Page):
         "Biobío": {"CGE": 230.4, "Frontel": 233.1}
     }
 
-    # --- Funciones de Diálogo ---
+    # --- Funciones de soporte ---
     def cerrar_dlg(e):
         dlg_info.open = False
         page.update()
@@ -42,12 +40,10 @@ def main(page: ft.Page):
             val_neto = tarifas_netas[drp_region.value][drp_empresa.value]
             kwh = float(input_kwh.value)
             deuda = float(input_saldo.value)
-
             neto = kwh * val_neto
             iva = neto * 0.19
             total_mes = neto + iva
             total_final = total_mes + deuda
-
             res_card.content.controls.clear()
             res_card.content.controls.extend([
                 ft.Text("INFORME TÉCNICO FEE SpA", weight="bold", color="#1E3A8A"),
@@ -65,8 +61,7 @@ def main(page: ft.Page):
             ])
             res_card.visible = True
             page.update()
-        except:
-            pass
+        except: pass
 
     def actualizar_empresas(e):
         drp_empresa.options = [ft.dropdown.Option(emp) for emp in tarifas_netas[drp_region.value].keys()]
@@ -75,32 +70,20 @@ def main(page: ft.Page):
         page.update()
 
     # --- Componentes de UI ---
-    drp_region = ft.Dropdown(
-        label="Región", 
-        options=[ft.dropdown.Option(r) for r in tarifas_netas.keys()], 
-        on_change=actualizar_empresas
-    )
+    drp_region = ft.Dropdown(label="Región", options=[ft.dropdown.Option(r) for r in tarifas_netas.keys()], on_change=actualizar_empresas)
     drp_empresa = ft.Dropdown(label="Empresa", disabled=True)
     input_kwh = ft.TextField(label="Consumo (kWh)", prefix_icon=ft.Icons.BOLT)
     input_saldo = ft.TextField(label="Saldo Anterior ($)", value="0", prefix_icon=ft.Icons.HISTORY)
     res_card = ft.Container(content=ft.Column(), padding=20, bgcolor="white", border_radius=15, visible=False)
 
-    # --- Estructura de la Página ---
     page.add(
         ft.Column([
             ft.Text("FEE SpA", size=32, weight="bold", color="#1E3A8A"),
-            ft.Text("Tarifas actualizadas automáticamente: Diciembre 2025 ✅", size=11, color="green"),
+            ft.Text("Tarifas actualizadas: Diciembre 2025 ✅", size=11, color="green"),
             ft.TextButton("Información Técnica", icon=ft.Icons.INFO, on_click=lambda _: setattr(dlg_info, 'open', True) or page.update()),
             ft.Divider(),
-            drp_region, 
-            drp_empresa, 
-            input_kwh, 
-            input_saldo,
-            ft.ElevatedButton(
-                "SIMULAR FACTURACIÓN", 
-                on_click=calcular, 
-                style=ft.ButtonStyle(bgcolor="#1E3A8A", color="white", padding=20)
-            ),
+            drp_region, drp_empresa, input_kwh, input_saldo,
+            ft.ElevatedButton("SIMULAR FACTURACIÓN", on_click=calcular, style=ft.ButtonStyle(bgcolor="#1E3A8A", color="white", padding=20)),
             res_card,
             ft.Container(height=40),
             ft.Text("Desarrollado por Elías Flores Pavez", size=12, weight="bold", color="#475569"),
@@ -108,10 +91,4 @@ def main(page: ft.Page):
         ], horizontal_alignment="center")
     )
 
-# --- Conector para Vercel ---
-import flet.fastapi as flet_fastapi
-
 app = flet_fastapi.app(main)
-
-if __name__ == "__main__":
-    ft.app(target=main)
