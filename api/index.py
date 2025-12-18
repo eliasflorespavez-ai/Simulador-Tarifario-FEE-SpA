@@ -109,4 +109,9 @@ def main(page: ft.Page):
     )
 
 # --- Conector para Vercel ---
+import flet.fastapi as flet_fastapi
+
 app = flet_fastapi.app(main)
+
+if __name__ == "__main__":
+    ft.app(target=main)
