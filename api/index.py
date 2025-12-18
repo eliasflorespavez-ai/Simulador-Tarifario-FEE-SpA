@@ -94,4 +94,7 @@ def main(page: ft.Page):
         ], horizontal_alignment="center")
     )
 
-app = ft.app(target=main, export_as_admin=True)
+import flet.fastapi as flet_fastapi
+
+# Esta línea reemplaza a app = ft.app(...)
+app = flet_fastapi.app(main)
