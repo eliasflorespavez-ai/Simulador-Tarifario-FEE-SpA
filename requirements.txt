@@ -1,3 +1,5 @@
 flet
 flet-fastapi
 flet-runtime
+fastapi
+uvicorn
