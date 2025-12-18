@@ -1,40 +1,27 @@
 import streamlit as st
+import os
+import sys
 
+# 1. Configuración de página (Debe ser lo primero)
 st.set_page_config(page_title="FEE SpA - Simulador", page_icon="⚡")
 
-st.title("⚡ FEE SpA")
-st.subheader("Simulador Tarifario Profesional")
-st.caption("Actualización: Diciembre 2025 ✅")
-
-# Tu base de datos de Ingeniería
-tarifas = {
-    "La Araucanía": {"CGE": 235.8, "Codiner": 238.5, "Frontel": 236.2},
-    "Metropolitana": {"Enel": 210.5, "CGE": 215.8, "Colina": 212.0},
-    "Valparaíso": {"Chilquinta": 228.4, "CGE": 230.1},
-    "Antofagasta": {"CGE": 238.4},
-    "Maule": {"CGE": 228.1},
-    "Biobío": {"CGE": 230.4, "Frontel": 233.1}
-}
-
-region = st.selectbox("Región", list(tarifas.keys()))
-empresa = st.selectbox("Distribuidora", list(tarifas[region].keys()))
-kwh = st.number_input("Consumo mensual (kWh)", min_value=0.0, value=250.0)
-deuda = st.number_input("Saldo Anterior / Deuda ($)", min_value=0.0, value=0.0)
-
-if st.button("GENERAR INFORME"):
-    valor_kwh = tarifas[region][empresa]
-    neto = kwh * valor_kwh
-    iva = neto * 0.19
-    total_mes = neto + iva
-    total_final = total_mes + deuda
+def main():
+    st.title("⚡ FEE SpA")
+    st.subheader("Simulador Tarifario Profesional")
+    
+    # Tu base de datos de tarifas (Simplificada para la prueba)
+    tarifas = {"La Araucanía": 235.8, "Metropolitana": 210.5}
+    
+    region = st.selectbox("Seleccione Región", list(tarifas.keys()))
+    kwh = st.number_input("Consumo (kWh)", min_value=0.0, value=100.0)
+    
+    if st.button("CALCULAR"):
+        total = kwh * tarifas[region]
+        st.success(f"Total Neto: ${int(total):,}")
     
     st.divider()
-    st.markdown("### 📊 INFORME TÉCNICO")
-    st.write(f"**Monto Neto:** ${int(neto):,}")
-    st.write(f"**IVA (19%):** ${int(iva):,}")
-    st.info(f"**Total del Mes:** ${int(total_mes):,}")
-    st.success(f"**TOTAL A PAGAR: ${int(total_final):,}**")
+    st.write("Ing. Elías Flores Pavez - FEE SpA")
 
-st.divider()
-st.write("**Desarrollado por Elías Flores Pavez**")
-st.write("*Ingeniero (E) Eléctrico*")
+# 2. EL BYPASS: Esto es lo que evita el error FUNCTION_INVOCATION_FAILED
+if __name__ == "__main__":
+    main()
